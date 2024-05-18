@@ -9,6 +9,7 @@ class TextAlignment:
     def __init__(self, tinkerUIWindow, textArea):
         self.window = tinkerUIWindow
         self.textArea = textArea
+        self.index = 0
 
     def AlignText(self, index):
         currentLineIndex = self.textArea.index(tk.INSERT)
@@ -19,9 +20,25 @@ class TextAlignment:
         self.textArea.tag_remove("right", lineStart, lineEnd)
         self.textArea.tag_remove("center", lineStart, lineEnd)
         self.textArea.tag_remove("left", lineStart, lineEnd)
-        match index:
+        print("index", index)
+        print(currentLineIndex.split('.')[1])
+        if index == -1:
+            self.index += 1
+            if self.index > 2:
+                self.index = 0
+        elif index == -2:
+            pass
+        elif index == -3:
+            if currentLineIndex.split('.')[1] == "0":
+                self.index = 0
+        else:
+            self.index = index
+
+        match self.index:
             case 0:
                 self.textArea.tag_add("left", lineStart, lineEnd)
+                if self.textArea.get(lineStart, lineEnd) == " ":
+                    self.textArea.delete(lineStart)
                 pass
             case 1:
                 if self.textArea.get(lineStart, lineEnd) == "":

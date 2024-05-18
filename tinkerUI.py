@@ -7,6 +7,7 @@ from Text_Alignment import TextAlignment
 from Menu_Creator import MenuCreator
 from File_Saving import FileSaver
 
+
 class TextEditor:
     def __init__(self):
         self.window = tk.Tk()
@@ -18,6 +19,8 @@ class TextEditor:
         self.textAlign = TextAlignment(tinkerUIWindow=self.window, textArea=self.textArea)
         self.fileSaver = FileSaver(tinkerUIWindow=self.window, textArea=self.textArea)
         self.menuCreator = MenuCreator(tinkerUIWindow=self.window, textArea=self.textArea, fileSaver=self.fileSaver, textAlign=self.textAlign)
+        self.ConfigureHotKeys()
+
         self.menuCreator.CreateMenus()
         self.window.mainloop()
 
@@ -25,3 +28,8 @@ class TextEditor:
         self.textArea.tag_configure("left", justify="left")
         self.textArea.tag_configure("center", justify="center")
         self.textArea.tag_configure("right", justify="right")
+
+    def ConfigureHotKeys(self):
+        self.window.bind_all("<Control-q>", lambda event: self.textAlign.AlignText(-1))
+        self.window.bind_all("<Return>", lambda event: self.textAlign.AlignText(-2))
+        self.window.bind_all("<BackSpace>", lambda event: self.textAlign.AlignText(-3))

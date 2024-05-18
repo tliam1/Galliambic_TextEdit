@@ -29,9 +29,10 @@ class MenuCreator:
 
         formatMenu = tk.Menu(menu)
         menu.add_cascade(label="Format", menu=formatMenu)
-        formatMenu.add_checkbutton(label="Align Text Left", command=lambda: self.textAlign.AlignText(0))
-        formatMenu.add_checkbutton(label="Align Text Center", command=lambda: self.textAlign.AlignText(1))
-        formatMenu.add_checkbutton(label="Align Text Right", command=lambda: self.textAlign.AlignText(2))
+        formatMenu.add_command(label="Cycle With Ctrl+Q", state=tk.DISABLED)
+        formatMenu.add_command(label="Align Text Left", command=lambda: self.textAlign.AlignText(0))
+        formatMenu.add_command(label="Align Text Center", command=lambda: self.textAlign.AlignText(1))
+        formatMenu.add_command(label="Align Text Right", command=lambda: self.textAlign.AlignText(2))
 
     def CreatePopUpMenu(self):
         self.popUpMenu = tk.Menu(self.window, tearoff=0)
