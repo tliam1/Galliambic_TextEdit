@@ -21,8 +21,8 @@ class TextAlignment:
         self.textArea.tag_remove("right", lineStart, lineEnd)
         self.textArea.tag_remove("center", lineStart, lineEnd)
         self.textArea.tag_remove("left", lineStart, lineEnd)
-        print("index", index)
-        print(currentLineIndex.split('.')[1])
+        # print("index", index)
+        # print(currentLineIndex.split('.')[1])
         if index == -1:
             self.index += 1
             if self.index > 2:
