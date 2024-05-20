@@ -1,4 +1,6 @@
 import tkinter as tk
+from tkinter.font import Font
+
 # import tkinter.messagebox
 # from tkinter import *
 # from tkinter import filedialog
@@ -6,19 +8,22 @@ import tkinter as tk
 from Text_Alignment import TextAlignment
 from Menu_Creator import MenuCreator
 from File_Saving import FileSaver
+from Fonts import TextFonts
 
 
 class TextEditor:
     def __init__(self):
         self.window = tk.Tk()
         self.window.title("Galliambic Editor")
-        self.alignText = [["Right", True], ["Center", False], ["Left", False]]
-        self.textArea = tk.Text(self.window, wrap=tk.WORD)
+        text_font = Font(family='Times New Roman', size=12)  # weight for boldness and stuff
+        self.textArea = tk.Text(self.window, wrap=tk.WORD, font=text_font)
         self.ConfigureTags()
         self.textArea.pack(expand=tk.YES, fill=tk.BOTH)
+        self.textFonts = TextFonts(textArea=self.textArea)
+        self.textFonts.SetFont('Times New Roman')
         self.textAlign = TextAlignment(tinkerUIWindow=self.window, textArea=self.textArea)
         self.fileSaver = FileSaver(tinkerUIWindow=self.window, textArea=self.textArea)
-        self.menuCreator = MenuCreator(tinkerUIWindow=self.window, textArea=self.textArea, fileSaver=self.fileSaver, textAlign=self.textAlign)
+        self.menuCreator = MenuCreator(tinkerUIWindow=self.window, textArea=self.textArea, fileSaver=self.fileSaver, textAlign=self.textAlign, fonts=self.textFonts)
         self.ConfigureHotKeys()
 
         self.menuCreator.CreateMenus()

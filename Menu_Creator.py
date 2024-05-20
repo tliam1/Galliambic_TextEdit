@@ -6,12 +6,13 @@ import ast
 
 
 class MenuCreator:
-    def __init__(self, tinkerUIWindow, textArea, fileSaver, textAlign):
+    def __init__(self, tinkerUIWindow, textArea, fileSaver, textAlign, fonts):
         self.window = tinkerUIWindow
         self.textArea = textArea
         self.popUpMenu = tk.Menu(self.window, tearoff=0)
         self.fileSaver = fileSaver
         self.textAlign = textAlign
+        self.fontList = fonts
 
     def CreateMenus(self):
         menu = tk.Menu(self.window)
@@ -33,6 +34,13 @@ class MenuCreator:
         formatMenu.add_command(label="Align Text Left", command=lambda: self.textAlign.AlignText(0))
         formatMenu.add_command(label="Align Text Center", command=lambda: self.textAlign.AlignText(1))
         formatMenu.add_command(label="Align Text Right", command=lambda: self.textAlign.AlignText(2))
+        formatMenu.add_separator()
+
+        fontMenu = tk.Menu(menu)
+        menu.add_cascade(label="Fonts", menu=fontMenu)
+        fontMenu.add_command(label="Arial", command=lambda: self.fontList.SetFont("Arial"))
+        fontMenu.add_command(label="Times New Roman", command=lambda: self.fontList.SetFont("Times New Roman"))
+        fontMenu.add_command(label="Terminal", command=lambda: self.fontList.SetFont("Terminal"))
 
     def CreatePopUpMenu(self):
         self.popUpMenu = tk.Menu(self.window, tearoff=0)

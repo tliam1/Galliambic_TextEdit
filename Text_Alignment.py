@@ -10,6 +10,7 @@ class TextAlignment:
         self.window = tinkerUIWindow
         self.textArea = textArea
         self.index = 0
+        self.fileLineSize = 0
 
     def AlignText(self, index):
         currentLineIndex = self.textArea.index(tk.INSERT)
@@ -27,10 +28,14 @@ class TextAlignment:
             if self.index > 2:
                 self.index = 0
         elif index == -2:
+            self.fileLineSize = int(self.textArea.index('end-1c').split('.')[0])
+            # print(self.fileLineSize)
             pass
         elif index == -3:
             if currentLineIndex.split('.')[1] == "0":
                 self.index = 0
+            self.fileLineSize = int(self.textArea.index('end-1c').split('.')[0])
+            # print(self.fileLineSize)
         else:
             self.index = index
 
