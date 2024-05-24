@@ -23,7 +23,7 @@ class TextEditor:
         self.frame = tk.Frame(self.window)
         self.frame.grid(row=0, column=0, columnspan=3, sticky="nsew")
 
-        self.numberBar = tk.Text(self.frame, width=3, padx=5, takefocus=0, border=0,
+        self.numberBar = tk.Text(self.frame, width=4, padx=5, pady=3, takefocus=0, border=0,
                                  background="lightgray", state="disabled", wrap="none", font=text_font)
         self.numberBar.pack(side="left", fill="y")
 
@@ -64,10 +64,15 @@ class TextEditor:
         self.window.bind("<Return>", lambda event: self.textAlign.AlignText(-2))
         self.window.bind("<Return>", lambda event: self.autoActions.AutoIndent())
         self.window.bind("<BackSpace>", lambda event: self.textAlign.AlignText(-3))
-        self.window.bind("<Key>", lambda event: self.footerInfoBar.UpdateFooter())
+
         self.window.bind("<Key>", lambda event: self.autoActions.AutoColoring())
         self.window.bind("<BackSpace>", lambda event: self.autoActions.AutoColoring())
-        self.window.bind("<Button-1>", lambda event: self.footerInfoBar.UpdateFooter())
+
+        self.textArea.bind("<Key>", lambda event: self.footerInfoBar.UpdateFooter())
+        self.window.bind("<Return>", lambda event: self.footerInfoBar.UpdateFooter())
+        self.textArea.bind("<Button-1>", lambda event: self.footerInfoBar.UpdateFooter())
+        self.textArea.bind("<BackSpace>", lambda event: self.footerInfoBar.UpdateFooter())
+
         self.textArea.bind("<KeyRelease>", self.update_number_bar)
         self.textArea.bind("<MouseWheel>", self.update_number_bar)
         self.textArea.bind("<Button-1>", self.update_number_bar)
