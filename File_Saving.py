@@ -20,7 +20,13 @@ class FileSaver:
             self.textArea.delete(1.0, tk.END)
 
     def OpenFile(self, MenuCreator):
-        file = filedialog.askopenfilename(defaultextension=".txt", filetypes=[("Text Files", "*.txt"), ("All Files", "*.*")])
+        file = filedialog.askopenfilename(defaultextension=".txt",
+                                          filetypes=[("Text Files", "*.txt"),
+                                                     ("C", "*.c"),
+                                                     ("C++", "*.cpp"),
+                                                     ("JavaScript", "*.js"),
+                                                     ("Python", "*.py"),
+                                                     ("All Files", "*.*")])
         if file:
             self.window.title(f"Galliambic Editor: {file}")
             self.currentFile = file
@@ -28,38 +34,41 @@ class FileSaver:
             self.textArea.delete(1.0, tk.END)
             with open(file, "r") as f:
                 content = f.read()
-                dump_content = ast.literal_eval(content)
-                print(dump_content)
-                self.LoadDumpContent(dump_content)
-
+                self.textArea.insert(1.0, content)
         pass
 
-    def LoadDumpContent(self, dump_content):
-        tags = {}
-        for (key, value, index) in dump_content:
-            if key == "tagon":
-                if value not in tags:
-                    tags[value] = [index]
-                else:
-                    tags[value].append(index)
-            elif key == "tagoff":
-                start_index = tags[value].pop()
-                self.textArea.tag_add(value, start_index, index)
-                if not tags[value]:
-                    del tags[value]
-            elif key == "mark":
-                self.textArea.mark_set(value, index)
-            elif key == "text":
-                self.textArea.insert(index, value)
+    # def LoadDumpContent(self, dump_content):
+    #     tags = {}
+    #     for (key, value, index) in dump_content:
+    #         if key == "tagon":
+    #             if value not in tags:
+    #                 tags[value] = [index]
+    #             else:
+    #                 tags[value].append(index)
+    #         elif key == "tagoff":
+    #             start_index = tags[value].pop()
+    #             self.textArea.tag_add(value, start_index, index)
+    #             if not tags[value]:
+    #                 del tags[value]
+    #         elif key == "mark":
+    #             self.textArea.mark_set(value, index)
+    #         elif key == "text":
+    #             self.textArea.insert(index, value)
 
     def SaveAsFile(self, MenuCreator):
-        file = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text Files", "*.txt"), ("All Files", "*.*")])
+        file = filedialog.asksaveasfilename(defaultextension=".txt",
+                                            filetypes=[("Text Files", "*.txt"),
+                                                       ("C", "*.c"),
+                                                       ("C++", "*.cpp"),
+                                                       ("JavaScript", "*.js"),
+                                                       ("Python", "*.py"),
+                                                       ("All Files", "*.*")])
         if file:
             self.currentFile = file
             MenuCreator.CreateMenus()
             with open(file, "w") as f:
-                content = self.textArea.dump(1.0, tk.END)
-                f.write(str(content))
+                content = f.read()
+                self.textArea.insert(1.0, content)
             self.window.title(f"Galliambic Editor: {file}")
         pass
 

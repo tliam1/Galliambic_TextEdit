@@ -28,13 +28,13 @@ class MenuCreator:
         fileMenu.add_separator()
         fileMenu.add_command(label="Exit", command=self.window.quit, state=tk.NORMAL)
 
-        formatMenu = tk.Menu(menu)
-        menu.add_cascade(label="Format", menu=formatMenu)
-        formatMenu.add_command(label="Cycle With Ctrl+Q", state=tk.DISABLED)
-        formatMenu.add_command(label="Align Text Left", command=lambda: self.textAlign.AlignText(0))
-        formatMenu.add_command(label="Align Text Center", command=lambda: self.textAlign.AlignText(1))
-        formatMenu.add_command(label="Align Text Right", command=lambda: self.textAlign.AlignText(2))
-        formatMenu.add_separator()
+        # formatMenu = tk.Menu(menu)
+        # menu.add_cascade(label="Format", menu=formatMenu)
+        # formatMenu.add_command(label="Cycle With Ctrl+Q", state=tk.DISABLED)
+        # formatMenu.add_command(label="Align Text Left", command=lambda: self.textAlign.AlignText(0))
+        # formatMenu.add_command(label="Align Text Center", command=lambda: self.textAlign.AlignText(1))
+        # formatMenu.add_command(label="Align Text Right", command=lambda: self.textAlign.AlignText(2))
+        # formatMenu.add_separator()
 
         fontMenu = tk.Menu(menu)
         menu.add_cascade(label="Fonts", menu=fontMenu)
@@ -44,7 +44,8 @@ class MenuCreator:
 
     def CreatePopUpMenu(self):
         self.popUpMenu = tk.Menu(self.window, tearoff=0)
-        self.popUpMenu.add_command(label="Align Text Center", command=lambda: self.textAlign.AlignText(1))
+        # TODO: add something here to actually show the pop up
+        # self.popUpMenu.add_command(label="Align Text Center", command=lambda: self.textAlign.AlignText(1))
         print("CREATE POP UP")
 
     def DoPopUp(self, event):
