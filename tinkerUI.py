@@ -58,20 +58,29 @@ class TextEditor:
         # self.textArea.tag_configure("right", justify="right")
         self.textArea.tag_configure("h_g", foreground="lightgreen")
         self.textArea.tag_configure("h_b", foreground="lightblue")
+        self.textArea.tag_configure("h_p", foreground="#D3A4FF")
+        self.textArea.tag_configure("h_y", foreground="#FFD700")
 
     def ConfigureHotKeys(self):
-        # self.window.bind_all("<Control-q>", lambda event: self.textAlign.AlignText(-1))
-        self.window.bind("<Return>", lambda event: self.textAlign.AlignText(-2))
-        self.window.bind("<Return>", lambda event: self.autoActions.AutoIndent())
-        self.window.bind("<BackSpace>", lambda event: self.textAlign.AlignText(-3))
+        self.window.bind("<BackSpace>", lambda event: self.OnBackSpace())
 
         self.window.bind("<Key>", lambda event: self.autoActions.AutoColoring())
-        self.window.bind("<BackSpace>", lambda event: self.autoActions.AutoColoring())
+        self.window.bind("<Shift-{>", lambda event: self.autoActions.AutoBrackets())
+        self.window.bind("<Shift-(>", lambda event: self.autoActions.AutoParen())
+        self.window.bind("<quoteright>", lambda event: self.autoActions.AutoTicks("'"))
+        self.window.bind('<quotedbl>', lambda event: self.autoActions.AutoTicks('"'))
+        self.window.bind("`", lambda event: self.autoActions.AutoTicks('`'))
+        self.textArea.bind("<Button-1>", lambda event: self.autoActions.AutoIndentPosition())
+        self.textArea.bind("<Up>", lambda event: self.autoActions.AutoIndentPosition())
+        self.textArea.bind("<Down>", lambda event: self.autoActions.AutoIndentPosition())
+        self.window.bind("<Return>", lambda event: self.OnReturn())
 
         self.textArea.bind("<Key>", lambda event: self.footerInfoBar.UpdateFooter())
-        self.window.bind("<Return>", lambda event: self.footerInfoBar.UpdateFooter())
+        # self.window.bind("<Return>", lambda event: self.footerInfoBar.UpdateFooter())
         self.textArea.bind("<Button-1>", lambda event: self.footerInfoBar.UpdateFooter())
         self.textArea.bind("<BackSpace>", lambda event: self.footerInfoBar.UpdateFooter())
+        self.textArea.bind("<Up>", lambda event: self.footerInfoBar.UpdateFooter())
+        self.textArea.bind("<Down>", lambda event: self.footerInfoBar.UpdateFooter())
 
         self.textArea.bind("<KeyRelease>", self.update_number_bar)
         self.textArea.bind("<MouseWheel>", self.update_number_bar)
@@ -94,3 +103,13 @@ class TextEditor:
             i = self.textArea.index(f"{i}+1line")
 
         self.numberBar.config(state="disabled")
+
+    def OnReturn(self):
+        # Call both AutoIndent and UpdateFooter functions here
+        self.autoActions.AutoIndent()
+        self.footerInfoBar.UpdateFooter()
+        self.textAlign.AlignText(-2)
+
+    def OnBackSpace(self):
+        self.textAlign.AlignText(-3)
+        self.autoActions.AutoColoring()
