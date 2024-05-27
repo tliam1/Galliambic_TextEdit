@@ -120,3 +120,4 @@ class AutoActions:
         self.textArea.insert(tk.INSERT, f"{qChar}")
         self.textArea.mark_set(tk.INSERT, f"{self.textArea.index(tk.INSERT)} -1c")
         self.AutoColoring()
+

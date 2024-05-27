@@ -15,6 +15,8 @@
 # TODO (Functionality): force cursor to the end of the line when switching lines
     # Done
 
+# TODO (BUG: TEXT COMPLETE): IF WORD START IS AT THE START OF THE LINE IT GOES BACK A LINE
+
 # TODO (BUG): cant have multiple function highlights one the same line
 
 # TODO (ORGANIZATION): Have helper functions for Autoactions file that gets current line positions, etc, etc

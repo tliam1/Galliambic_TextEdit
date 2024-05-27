@@ -1,16 +1,12 @@
 import tkinter as tk
 from tkinter.font import Font
-
-# import tkinter.messagebox
-# from tkinter import *
-# from tkinter import filedialog
-# import ast
 from Text_Alignment import TextAlignment
 from Menu_Creator import MenuCreator
 from File_Saving import FileSaver
 from Fonts import TextFonts
 from FooterInfoBar import FooterInfoBar
 from AutoActions import AutoActions
+from TextComplete import TextComplete
 
 
 class TextEditor:
@@ -33,13 +29,16 @@ class TextEditor:
 
         # self.textArea.grid(row=0, column=1, columnspan=2, sticky="nsew")
 
+        self.autoCompleteBox = tk.Listbox(self.window, bg="lightgray", fg="black", bd=0)
+
         self.infoBar = tk.Label(self.window, text="Info bar text", bg="lightgray", fg="black", anchor="w")
-        self.infoBar.grid(row=1, column=0, columnspan=3, sticky="ew")
+        self.infoBar.grid(row=2, column=0, columnspan=3, sticky="ew")
 
         # self.numberBar = tk.Label(self.window, text="~", bg="lightgray", fg="black", anchor="w")
         # self.numberBar.grid(row=0, column=0, sticky="ns")
 
         self.autoActions = AutoActions(tinkerUIWindow=self.window, textArea=self.textArea)
+        self.textComplete = TextComplete(tinkerUIWindow=self.window, textArea=self.textArea, textCompleteWindow=self.autoCompleteBox)
         self.textFonts = TextFonts(textArea=self.textArea)
         self.textFonts.SetFont('Times New Roman')
         self.textAlign = TextAlignment(tinkerUIWindow=self.window, textArea=self.textArea)
@@ -62,31 +61,32 @@ class TextEditor:
         self.textArea.tag_configure("h_y", foreground="#FFD700")
 
     def ConfigureHotKeys(self):
-        self.window.bind("<BackSpace>", lambda event: self.OnBackSpace())
+        self.textArea.bind("<BackSpace>", lambda event: self.OnBackSpace())
+        self.textArea.bind("<Return>", lambda event: self.OnReturn())
+        self.textArea.bind("<Key>", lambda event: self.OnAnyKey())
+        self.textArea.bind("<Up>", lambda event: self.OnUpArrow())
+        self.textArea.bind("<Down>", lambda event: self.OnDownArrow())
+        self.textArea.bind("<Button-1>", lambda event: self.OnMouseClick())
+        self.textArea.bind("<KeyRelease>", lambda event: self.OnAnyKeyUp())
 
-        self.window.bind("<Key>", lambda event: self.autoActions.AutoColoring())
+        # self.textArea.bind("<Key>", lambda event: self.autoActions.AutoColoring())
         self.window.bind("<Shift-{>", lambda event: self.autoActions.AutoBrackets())
-        self.window.bind("<Shift-(>", lambda event: self.autoActions.AutoParen())
-        self.window.bind("<quoteright>", lambda event: self.autoActions.AutoTicks("'"))
-        self.window.bind('<quotedbl>', lambda event: self.autoActions.AutoTicks('"'))
-        self.window.bind("`", lambda event: self.autoActions.AutoTicks('`'))
-        self.textArea.bind("<Button-1>", lambda event: self.autoActions.AutoIndentPosition())
-        self.textArea.bind("<Up>", lambda event: self.autoActions.AutoIndentPosition())
-        self.textArea.bind("<Down>", lambda event: self.autoActions.AutoIndentPosition())
-        self.window.bind("<Return>", lambda event: self.OnReturn())
-
-        self.textArea.bind("<Key>", lambda event: self.footerInfoBar.UpdateFooter())
-        # self.window.bind("<Return>", lambda event: self.footerInfoBar.UpdateFooter())
-        self.textArea.bind("<Button-1>", lambda event: self.footerInfoBar.UpdateFooter())
-        self.textArea.bind("<BackSpace>", lambda event: self.footerInfoBar.UpdateFooter())
-        self.textArea.bind("<Up>", lambda event: self.footerInfoBar.UpdateFooter())
-        self.textArea.bind("<Down>", lambda event: self.footerInfoBar.UpdateFooter())
-
-        self.textArea.bind("<KeyRelease>", self.update_number_bar)
+        self.textArea.bind("<Shift-(>", lambda event: self.autoActions.AutoParen())
+        self.textArea.bind("<quoteright>", lambda event: self.autoActions.AutoTicks("'"))
+        self.textArea.bind('<quotedbl>', lambda event: self.autoActions.AutoTicks('"'))
+        self.textArea.bind("`", lambda event: self.autoActions.AutoTicks('`'))
         self.textArea.bind("<MouseWheel>", self.update_number_bar)
-        self.textArea.bind("<Button-1>", self.update_number_bar)
-        self.textArea.bind("<Return>", self.update_number_bar)
-        self.textArea.bind("<BackSpace>", self.update_number_bar)
+        self.textArea.bind(";", lambda event: self.textComplete.GatherVariablesAndFunctionNames())
+        self.textArea.bind("<Shift-Tab>", lambda event: self.textComplete.TakeMainFocus())
+        # self.textArea.bind("<KeyRelease>", self.update_number_bar)
+        # self.window.bind("<Return>", lambda event: self.footerInfoBar.UpdateFooter())
+        # self.textArea.bind("<Button-1>", lambda event: self.footerInfoBar.UpdateFooter())
+        # self.textArea.bind("<BackSpace>", lambda event: self.On)
+        # self.textArea.bind("<Up>", lambda event: self.footerInfoBar.UpdateFooter())
+        # self.textArea.bind("<Down>", lambda event: self.footerInfoBar.UpdateFooter())
+        # self.textArea.bind("<Button-1>", self.update_number_bar)
+        # self.textArea.bind("<Return>", self.update_number_bar)
+        # self.textArea.bind("<BackSpace>", self.update_number_bar)
 
     def update_number_bar(self, event=None):
         self.numberBar.config(state="normal")
@@ -109,7 +109,38 @@ class TextEditor:
         self.autoActions.AutoIndent()
         self.footerInfoBar.UpdateFooter()
         self.textAlign.AlignText(-2)
+        self.update_number_bar()
+        self.textComplete.GatherVariablesAndFunctionNames()
 
     def OnBackSpace(self):
         self.textAlign.AlignText(-3)
         self.autoActions.AutoColoring()
+        self.footerInfoBar.UpdateFooter()
+        self.update_number_bar()
+
+    def OnAnyKey(self):
+        self.footerInfoBar.UpdateFooter()
+
+    def OnAnyKeyUp(self):
+        self.textComplete.GatherVariablesAndFunctionNames()
+        self.textComplete.FilterResults()
+        self.autoActions.AutoColoring()
+        self.update_number_bar()
+
+    def OnSpace(self):
+        self.textComplete.GatherVariablesAndFunctionNames()
+
+    def OnMouseClick(self):
+        self.autoActions.AutoIndentPosition()
+        self.footerInfoBar.UpdateFooter()
+        self.update_number_bar()
+
+    def OnUpArrow(self):
+        self.autoActions.AutoIndentPosition()
+        self.footerInfoBar.UpdateFooter()
+        pass
+
+    def OnDownArrow(self):
+        self.autoActions.AutoIndentPosition()
+        self.footerInfoBar.UpdateFooter()
+        pass

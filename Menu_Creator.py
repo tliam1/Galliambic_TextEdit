@@ -45,13 +45,13 @@ class MenuCreator:
     def CreatePopUpMenu(self):
         self.popUpMenu = tk.Menu(self.window, tearoff=0)
         # TODO: add something here to actually show the pop up
-        # self.popUpMenu.add_command(label="Align Text Center", command=lambda: self.textAlign.AlignText(1))
+        self.popUpMenu.add_command(label="Align Text Center", command=lambda: self.textAlign.AlignText(1))
         print("CREATE POP UP")
 
     def DoPopUp(self, event):
         print(event.x_root)
         try:
-            self.popUpMenu.tk_popup(event.x_root, event.y_root)
+            self.popUpMenu.post(event.x_root, event.y_root)
         finally:
             self.popUpMenu.grab_release()
         print("ATTEMPT POP UP")
