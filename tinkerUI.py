@@ -22,9 +22,9 @@ class TextEditor:
         self.numberBar = tk.Text(self.frame, width=4, padx=5, pady=3, takefocus=0, border=0,
                                  background="lightgray", state="disabled", wrap="none", font=text_font)
         self.numberBar.pack(side="left", fill="y")
-
+        tab = text_font.measure('    ')
         self.textArea = tk.Text(self.frame, wrap=tk.NONE, font=text_font, background="#1E1E1E",
-                                foreground="white", insertbackground="lightgrey", undo=True)
+                                foreground="white", insertbackground="lightgrey", undo=True, tabs=tab)
         self.textArea.pack(side="left", fill="both", expand=True)
 
         # self.textArea.grid(row=0, column=1, columnspan=2, sticky="nsew")
@@ -42,7 +42,7 @@ class TextEditor:
         self.textFonts = TextFonts(textArea=self.textArea)
         self.textFonts.SetFont('Times New Roman')
         self.textAlign = TextAlignment(tinkerUIWindow=self.window, textArea=self.textArea)
-        self.fileSaver = FileSaver(tinkerUIWindow=self.window, textArea=self.textArea)
+        self.fileSaver = FileSaver(tinkerUIWindow=self.window, textArea=self.textArea, TextHighlighter=self.autoActions)
         self.menuCreator = MenuCreator(tinkerUIWindow=self.window, textArea=self.textArea, fileSaver=self.fileSaver, textAlign=self.textAlign, fonts=self.textFonts)
         self.footerInfoBar = FooterInfoBar(tinkerUIWindow=self.window, infoBar=self.infoBar, mainTextArea=self.textArea)
 
@@ -68,6 +68,7 @@ class TextEditor:
         self.textArea.bind("<Down>", lambda event: self.OnDownArrow())
         self.textArea.bind("<Button-1>", lambda event: self.OnMouseClick())
         self.textArea.bind("<KeyRelease>", lambda event: self.OnAnyKeyUp())
+        self.textArea.bind("<KeyRelease-Return>", lambda event: self.OnReturnRelease())
 
         # self.textArea.bind("<Key>", lambda event: self.autoActions.AutoColoring())
         self.window.bind("<Shift-{>", lambda event: self.autoActions.AutoBrackets())
@@ -106,7 +107,6 @@ class TextEditor:
 
     def OnReturn(self):
         # Call both AutoIndent and UpdateFooter functions here
-        self.autoActions.AutoIndent()
         self.footerInfoBar.UpdateFooter()
         self.textAlign.AlignText(-2)
         self.update_number_bar()
@@ -144,3 +144,8 @@ class TextEditor:
         self.autoActions.AutoIndentPosition()
         self.footerInfoBar.UpdateFooter()
         pass
+
+    def OnReturnRelease(self):
+        self.autoActions.AutoIndent()
+        self.update_number_bar()
+        print("CALLED")

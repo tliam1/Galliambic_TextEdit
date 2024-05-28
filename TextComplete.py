@@ -60,14 +60,14 @@ class TextComplete:
         self.textCompleteWindow.delete(0, tk.END)
         for option in options:
             self.textCompleteWindow.insert(tk.END, option)
-        self.textCompleteWindow.place(relx=0, rely=1.0, anchor="sw")
+        self.textCompleteWindow.place(relx=1.0, rely=1.0, anchor="se")
         self.textCompleteWindow.lift()
 
     def insertSelectedOption(self, event):
         selected_index = self.textCompleteWindow.curselection()
         if selected_index:
             selected_option = self.textCompleteWindow.get(selected_index)
-            self.textArea.delete("insert-1c wordstart", "insert wordend-1c")
+            self.textArea.delete("insert-1c wordstart+1c", "insert wordend-1c")
             self.textArea.insert("insert", selected_option + " ")
             self.textCompleteWindow.place_forget()
             self.UndoFocus()

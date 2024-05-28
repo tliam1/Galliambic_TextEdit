@@ -7,10 +7,11 @@ class AutoActions:
         self.textArea = textArea
         self.window = tinkerUIWindow
         self.varNames = ["int", "float", "char", "uint", "uint32", "long", "int32", "string", "void",
-                         "bool", "unsigned", "short", "var", "let"]
+                         "bool", "unsigned", "short", "var", "let", "struct", "return"]
         # self.functionIdentifier = ["()"]
 
     def AutoIndent(self):
+        print("AUTO INDENT")
         line = self.textArea.index(f"{tk.INSERT} -1c")  # get current line pos
         textPriorToNewLine = self.textArea.get("1.0", line)
         # Find the position of the last newline character before the current line
@@ -23,70 +24,62 @@ class AutoActions:
             start_of_previous_paragraph = f"1.0 + {last_newline_index + 1}c"
         # print(self.textArea.get(start_of_previous_paragraph, line))
         tabs = re.findall('\t', self.textArea.get(start_of_previous_paragraph, line))
+        print(len(tabs))
         # find the most recent paragraph prior to current position
         for tab in tabs:
             self.textArea.insert(tk.INSERT, "\t")
 
     def AutoColoring(self):
         cursorIndex = self.textArea.index(tk.INSERT)
-        lineStartIndex = f"{cursorIndex.split('.')[0]}"
+        lineStartIndex = f"{cursorIndex.split('.')[0]}.0"
         lineEndIndex = f"{cursorIndex.split('.')[0]}.end"
-        allLineText = self.textArea.get(lineStartIndex + ".0", lineEndIndex)
-        # Find the last word in the text before the cursor
-        matchWord = re.search(r'(\b\w+\b)$', allLineText)
-        matchFunction = re.search(r'\b\w+\([^()]*\)', allLineText)
-        matchString = re.search(r'([\'"`]).*?\1', allLineText)
-        commentPattern = r'(#|\/\/)'
-        matchComment = re.search(commentPattern, allLineText)
-        if matchWord:
-            wordStartIndex = matchWord.start()
-            wordEndIndex = matchWord.end()
-            wordText = matchWord.group()
-            start = f"{lineStartIndex}.{wordStartIndex}"
-            end = f"{lineStartIndex}.{wordEndIndex}"
-            if wordText in self.varNames:
-                self.textArea.tag_add("h_g", start, end)
-            else:
-                self.textArea.tag_remove("h_g", start, end)
+        allLineText = self.textArea.get(lineStartIndex, lineEndIndex)
 
-        if matchFunction:
-            functionStartIndex = matchFunction.start()
-            # wordEndIndex = matchFunction.end()
-            wordText = matchFunction.group()
-            parenStart = wordText.index("(")
-            # for char in wordText:
-            start = f"{lineStartIndex}.{functionStartIndex}"
-            # end = f"{lineStartIndex}.{wordEndIndex}"
-            self.textArea.tag_add("h_b", start, f"{start}+{parenStart}c")
-        else:
-            # check if there are blue tags on the line, then remove as needed
-            self.textArea.tag_remove("h_b", lineStartIndex + ".0", lineEndIndex)
+        # Clear previous tags on the line
+        self.textArea.tag_remove("h_g", lineStartIndex, lineEndIndex)
+        self.textArea.tag_remove("h_b", lineStartIndex, lineEndIndex)
+        self.textArea.tag_remove("h_p", lineStartIndex, lineEndIndex)
+        self.textArea.tag_remove("h_y", lineStartIndex, lineEndIndex)
 
+        # Apply comment highlighting first
+        matchComment = re.search(r'(#|//).*', allLineText)
         if matchComment:
             commentStartIndex = matchComment.start()
-            commentEndIndex = matchComment.end()
-            # wordText = matchComment.group()
-            start = f"{lineStartIndex}.{commentStartIndex}"
-            end = f"{lineStartIndex}.{commentEndIndex}"
-            self.textArea.tag_remove("h_g", start, end)
-            self.textArea.tag_remove("h_b", lineStartIndex + ".0", lineEndIndex)
+            start = f"{lineStartIndex}+{commentStartIndex}c"
             self.textArea.tag_add("h_p", start, lineEndIndex)
-        pass
+            return  # No further processing needed for this line
 
-        if matchString:
-            stringStartIndex = matchString.start()
-            stringEndIndex = matchString.end()
-            # wordText = matchWord.group()
-            start = f"{lineStartIndex}.{stringStartIndex}"
-            end = f"{lineStartIndex}.{stringEndIndex}"
+        # Apply string highlighting
+        matchString = re.finditer(r'([\'"`]).*?\1', allLineText)
+        for match in matchString:
+            stringStartIndex = match.start()
+            stringEndIndex = match.end()
+            start = f"{lineStartIndex}+{stringStartIndex}c"
+            end = f"{lineStartIndex}+{stringEndIndex}c"
             self.textArea.tag_add("h_y", start, end)
-        else:
-            # check if there are blue tags on the line, then remove as needed
-            self.textArea.tag_remove("h_y", lineStartIndex + ".0", lineEndIndex)
+
+        # Apply function highlighting
+        matchFunction = re.finditer(r'\b(?![0-9]+\b)\w+\(', allLineText)
+        for match in matchFunction:
+            functionStartIndex = match.start()
+            parenStart = match.group().index("(")
+            start = f"{lineStartIndex}+{functionStartIndex}c"
+            self.textArea.tag_add("h_b", start, f"{start}+{parenStart}c")
+
+        # Apply variable name highlighting
+        matchWords = re.finditer(r'\b\w+\b', allLineText)
+        for match in matchWords:
+            wordText = match.group()
+            if wordText in self.varNames:
+                wordStartIndex = match.start()
+                wordEndIndex = match.end()
+                start = f"{lineStartIndex}+{wordStartIndex}c"
+                end = f"{lineStartIndex}+{wordEndIndex}c"
+                self.textArea.tag_add("h_g", start, end)
 
     def AutoBrackets(self):
         cursor_index = self.textArea.index(tk.INSERT)
-        lineStartIndex = f"{int(cursor_index.split('.')[0])-1}"
+        lineStartIndex = f"{int(cursor_index.split('.')[0]) - 1}"
         self.textArea.insert(tk.INSERT, "\n")
         self.AutoIndent()
         self.textArea.insert(tk.INSERT, "\t")
@@ -95,7 +88,7 @@ class AutoActions:
         # Go back one space (this should only be tabs at the moment
         self.textArea.delete(f"{tk.INSERT} -1c", tk.INSERT)
         self.textArea.insert(tk.INSERT, "}")
-        self.textArea.mark_set("insert", "%d.%d" % (int(lineStartIndex)+2, 0))
+        self.textArea.mark_set("insert", "%d.%d" % (int(lineStartIndex) + 2, 0))
         self.AutoIndentPosition()
 
     def AutoIndentPosition(self):
@@ -120,4 +113,55 @@ class AutoActions:
         self.textArea.insert(tk.INSERT, f"{qChar}")
         self.textArea.mark_set(tk.INSERT, f"{self.textArea.index(tk.INSERT)} -1c")
         self.AutoColoring()
+
+    def FullTextAutoColoring(self):
+        allText = self.textArea.get("1.0", "end-1c")
+
+        # Clear all previous tags
+        self.textArea.tag_remove("h_g", "1.0", "end")
+        self.textArea.tag_remove("h_b", "1.0", "end")
+        self.textArea.tag_remove("h_p", "1.0", "end")
+        self.textArea.tag_remove("h_y", "1.0", "end")
+
+        lines = allText.split("\n")
+
+        for line_num, line in enumerate(lines, start=1):
+            lineStartIndex = f"{line_num}.0"
+            lineEndIndex = f"{line_num}.end"
+
+            # Apply comment highlighting first
+            matchComments = re.finditer(r'(#|//).*', line)
+            for match in matchComments:
+                commentStartIndex = match.start()
+                start = f"{lineStartIndex}+{commentStartIndex}c"
+                self.textArea.tag_add("h_p", start, lineEndIndex)
+                continue  # Skip further processing for this line
+
+            # Apply string highlighting
+            matchStrings = re.finditer(r'([\'"`]).*?\1', line)
+            for match in matchStrings:
+                stringStartIndex = match.start()
+                stringEndIndex = match.end()
+                start = f"{lineStartIndex}+{stringStartIndex}c"
+                end = f"{lineStartIndex}+{stringEndIndex}c"
+                self.textArea.tag_add("h_y", start, end)
+
+            # Apply function highlighting
+            matchFunctions = re.finditer(r'\b(?![0-9]+\b)\w+\(', line)
+            for match in matchFunctions:
+                functionStartIndex = match.start()
+                parenStart = match.group().index("(")
+                start = f"{lineStartIndex}+{functionStartIndex}c"
+                self.textArea.tag_add("h_b", start, f"{start}+{parenStart}c")
+
+            # Apply variable name highlighting
+            matchWords = re.finditer(r'\b\w+\b', line)
+            for match in matchWords:
+                wordText = match.group()
+                if wordText in self.varNames:
+                    wordStartIndex = match.start()
+                    wordEndIndex = match.end()
+                    start = f"{lineStartIndex}+{wordStartIndex}c"
+                    end = f"{lineStartIndex}+{wordEndIndex}c"
+                    self.textArea.tag_add("h_g", start, end)
 

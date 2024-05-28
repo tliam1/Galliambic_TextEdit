@@ -6,10 +6,11 @@ import ast
 
 
 class FileSaver:
-    def __init__(self, tinkerUIWindow, textArea):
+    def __init__(self, tinkerUIWindow, textArea, TextHighlighter):
         self.window = tinkerUIWindow
         self.textArea = textArea
         self.currentFile = None
+        self.textHighlighter = TextHighlighter
 
     def NewFile(self, MenuCreator):
         res = tkinter.messagebox.askokcancel("Reset File?", "Are you sure you want to reset your file? Any unsaved changes will be discarded.")
@@ -35,6 +36,7 @@ class FileSaver:
             with open(file, "r") as f:
                 content = f.read()
                 self.textArea.insert(1.0, content)
+            self.textHighlighter.FullTextAutoColoring()
         pass
 
     # def LoadDumpContent(self, dump_content):
