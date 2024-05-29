@@ -18,6 +18,8 @@
 # TODO (BUG): Autocomplete sometimes doesnt delete first character
 
 # TODO (BUG: TEXT COMPLETE): IF WORD START IS AT THE START OF THE LINE IT GOES BACK A LINE
+    # I think I fixed this
+    # TODO: tweak the word complete for better filtering
 
 # TODO (BUG): cant have multiple function highlights one the same line
 
@@ -32,3 +34,6 @@
 
 # TODO (FUNCTIONALITY): Change tab length
     # Done
+
+
+# TODO (FUNCTIONALITY): stretch to fix on window size change
