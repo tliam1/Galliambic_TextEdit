@@ -19,7 +19,7 @@ class TextEditor:
         self.frame = tk.Frame(self.window)
         self.frame.grid(row=0, column=0, columnspan=3, sticky="nsew")
 
-        self.numberBar = tk.Text(self.frame, width=4, padx=5, pady=3, takefocus=0, border=0,
+        self.numberBar = tk.Text(self.frame, width=4, padx=5, pady=2, takefocus=0, border=0,
                                  background="lightgray", state="disabled", wrap="none", font=text_font)
         self.numberBar.pack(side="left", fill="y")
         tab = text_font.measure('    ')
@@ -59,6 +59,7 @@ class TextEditor:
         self.textArea.tag_configure("h_b", foreground="lightblue")
         self.textArea.tag_configure("h_p", foreground="#D3A4FF")
         self.textArea.tag_configure("h_y", foreground="#FFD700")
+        self.textArea.tag_configure("h_r", foreground='#D2042D')
 
     def ConfigureHotKeys(self):
         self.textArea.bind("<BackSpace>", lambda event: self.OnBackSpace())
@@ -66,11 +67,12 @@ class TextEditor:
         self.textArea.bind("<Key>", lambda event: self.OnAnyKey())
         self.textArea.bind("<Up>", lambda event: self.OnUpArrow())
         self.textArea.bind("<Down>", lambda event: self.OnDownArrow())
+        self.textArea.bind("<KeyRelease-Up>", lambda event: self.OnUpArrowRelease())
+        self.textArea.bind("<KeyRelease-Down>", lambda event: self.OnDownArrowRelease())
         self.textArea.bind("<Button-1>", lambda event: self.OnMouseClick())
         self.textArea.bind("<KeyRelease>", lambda event: self.OnAnyKeyUp())
         self.textArea.bind("<KeyRelease-Return>", lambda event: self.OnReturnRelease())
 
-        # self.textArea.bind("<Key>", lambda event: self.autoActions.AutoColoring())
         self.window.bind("<Shift-{>", lambda event: self.autoActions.AutoBrackets())
         self.textArea.bind("<Shift-(>", lambda event: self.autoActions.AutoParen())
         self.textArea.bind("<quoteright>", lambda event: self.autoActions.AutoTicks("'"))
@@ -79,15 +81,6 @@ class TextEditor:
         self.textArea.bind("<MouseWheel>", self.update_number_bar)
         self.textArea.bind(";", lambda event: self.textComplete.GatherVariablesAndFunctionNames())
         self.textArea.bind("<Shift-Tab>", lambda event: self.textComplete.TakeMainFocus())
-        # self.textArea.bind("<KeyRelease>", self.update_number_bar)
-        # self.window.bind("<Return>", lambda event: self.footerInfoBar.UpdateFooter())
-        # self.textArea.bind("<Button-1>", lambda event: self.footerInfoBar.UpdateFooter())
-        # self.textArea.bind("<BackSpace>", lambda event: self.On)
-        # self.textArea.bind("<Up>", lambda event: self.footerInfoBar.UpdateFooter())
-        # self.textArea.bind("<Down>", lambda event: self.footerInfoBar.UpdateFooter())
-        # self.textArea.bind("<Button-1>", self.update_number_bar)
-        # self.textArea.bind("<Return>", self.update_number_bar)
-        # self.textArea.bind("<BackSpace>", self.update_number_bar)
 
     def update_number_bar(self, event=None):
         self.numberBar.config(state="normal")
@@ -120,6 +113,7 @@ class TextEditor:
 
     def OnAnyKey(self):
         self.footerInfoBar.UpdateFooter()
+        self.update_number_bar()
 
     def OnAnyKeyUp(self):
         self.textComplete.GatherVariablesAndFunctionNames()
@@ -148,4 +142,12 @@ class TextEditor:
     def OnReturnRelease(self):
         self.autoActions.AutoIndent()
         self.update_number_bar()
-        print("CALLED")
+
+    def OnUpArrowRelease(self):
+        self.update_number_bar()
+
+    def OnDownArrowRelease(self):
+        self.update_number_bar()
+
+    def OnScrollWheelRelease(self):
+        pass

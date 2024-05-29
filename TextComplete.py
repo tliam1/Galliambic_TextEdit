@@ -38,7 +38,6 @@ class TextComplete:
             # print(self.userVars)
         else:
             self.userVars.clear()
-            print("No variables found")
         pass
 
     def FilterResults(self):

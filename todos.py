@@ -13,7 +13,7 @@
     # in progress
 
 # TODO (Functionality): force cursor to the end of the line when switching lines
-    # Done
+    # Sort of works, still a little buggy as up and down arrows sometimes done change lines? Idk
 
 # TODO (BUG): Autocomplete sometimes doesnt delete first character
 
@@ -31,3 +31,4 @@
 # TODO (BUG): I am currently only looking for the starting paren to determine function coloring. If one gets deleted so should the other and color should be removed
 
 # TODO (FUNCTIONALITY): Change tab length
+    # Done

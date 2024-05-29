@@ -8,10 +8,10 @@ class AutoActions:
         self.window = tinkerUIWindow
         self.varNames = ["int", "float", "char", "uint", "uint32", "long", "int32", "string", "void",
                          "bool", "unsigned", "short", "var", "let", "struct", "return"]
+        self.blockCommentBeginLine = '1.0'
         # self.functionIdentifier = ["()"]
 
     def AutoIndent(self):
-        print("AUTO INDENT")
         line = self.textArea.index(f"{tk.INSERT} -1c")  # get current line pos
         textPriorToNewLine = self.textArea.get("1.0", line)
         # Find the position of the last newline character before the current line
@@ -49,6 +49,22 @@ class AutoActions:
             self.textArea.tag_add("h_p", start, lineEndIndex)
             return  # No further processing needed for this line
 
+        # Detect multi-line block comments
+        blockCommentStart = re.search(r'/\*', allLineText)
+        if blockCommentStart:
+            self.blockCommentBeginLine = cursorIndex.split('.')[0] + ".0"
+            startLineNum = cursorIndex.split('.')[0]
+            start = f"{startLineNum}.0+{blockCommentStart.start()}c"
+            end = lineEndIndex
+            self.textArea.tag_add("h_p", start, end)
+            return
+
+        # Check if currently inside a multi-line block comment
+        previousLinesText = self.textArea.get(self.blockCommentBeginLine, lineStartIndex)
+        if re.search(r'/\*', previousLinesText) and not re.search(r'\*/', previousLinesText):
+            self.textArea.tag_add("h_p", lineStartIndex, lineEndIndex)
+            return
+
         # Apply string highlighting
         matchString = re.finditer(r'([\'"`]).*?\1', allLineText)
         for match in matchString:
@@ -59,7 +75,7 @@ class AutoActions:
             self.textArea.tag_add("h_y", start, end)
 
         # Apply function highlighting
-        matchFunction = re.finditer(r'\b(?![0-9]+\b)\w+\(', allLineText)
+        matchFunction = re.finditer(r'\b(?![0-9]+\b)\w+\(|\b(?![0-9]+\b)\w+\s+\(', allLineText)
         for match in matchFunction:
             functionStartIndex = match.start()
             parenStart = match.group().index("(")
@@ -76,6 +92,15 @@ class AutoActions:
                 start = f"{lineStartIndex}+{wordStartIndex}c"
                 end = f"{lineStartIndex}+{wordEndIndex}c"
                 self.textArea.tag_add("h_g", start, end)
+
+        # Apply number highlighting
+        matchNumbers = re.finditer(r'[0-9]+', allLineText)
+        for matchNumber in matchNumbers:
+            numberStartIndex = matchNumber.start()
+            numberEndIndex = matchNumber.end()
+            start = f"{lineStartIndex}+{numberStartIndex}c"
+            end = f"{lineStartIndex}+{numberEndIndex}c"
+            self.textArea.tag_add("h_r", start, end)
 
     def AutoBrackets(self):
         cursor_index = self.textArea.index(tk.INSERT)
@@ -137,6 +162,21 @@ class AutoActions:
                 self.textArea.tag_add("h_p", start, lineEndIndex)
                 continue  # Skip further processing for this line
 
+            # Detect multi-line block comments
+            blockCommentStart = re.search(r'/\*', line)
+            if blockCommentStart:
+                self.blockCommentBeginLine = lineStartIndex
+                start = f"{lineStartIndex}+{blockCommentStart.start()}c"
+                self.textArea.tag_add("h_p", start, lineEndIndex)
+                continue
+
+            # Check if currently inside a multi-line block comment
+            previousLinesText = self.textArea.get(self.blockCommentBeginLine, lineStartIndex)
+            if re.search(r'/\*', previousLinesText) and not re.search(r'\*/', previousLinesText):
+                self.textArea.tag_add("h_p", lineStartIndex, lineEndIndex)
+                continue
+
+
             # Apply string highlighting
             matchStrings = re.finditer(r'([\'"`]).*?\1', line)
             for match in matchStrings:
@@ -147,7 +187,7 @@ class AutoActions:
                 self.textArea.tag_add("h_y", start, end)
 
             # Apply function highlighting
-            matchFunctions = re.finditer(r'\b(?![0-9]+\b)\w+\(', line)
+            matchFunctions = re.finditer(r'\b(?![0-9]+\b)\w+\(|\b(?![0-9]+\b)\w+\s+\(', line)
             for match in matchFunctions:
                 functionStartIndex = match.start()
                 parenStart = match.group().index("(")
@@ -165,3 +205,11 @@ class AutoActions:
                     end = f"{lineStartIndex}+{wordEndIndex}c"
                     self.textArea.tag_add("h_g", start, end)
 
+            # Apply number highlighting
+            matchNumbers = re.finditer(r'[0-9]+', line)
+            for matchNumber in matchNumbers:
+                numberStartIndex = matchNumber.start()
+                numberEndIndex = matchNumber.end()
+                start = f"{lineStartIndex}+{numberStartIndex}c"
+                end = f"{lineStartIndex}+{numberEndIndex}c"
+                self.textArea.tag_add("h_r", start, end)
