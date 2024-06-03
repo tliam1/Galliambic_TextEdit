@@ -51,6 +51,7 @@ class TextEditor:
         self.showDirectory = ShowDirectoryFiles(tinkerUIWindow=self.window, textArea=self.textArea, showDirectoryWindow=self.directoryFilesBox, fileSaver=self.fileSaver, textHighlighter=self.autoActions)
 
         self.menuCreator = MenuCreator(tinkerUIWindow=self.window, textArea=self.textArea, fileSaver=self.fileSaver, textAlign=self.textAlign, fonts=self.textFonts, directoryWindow=self.showDirectory)
+        self.showDirectory.menuCreator = self.menuCreator
         self.footerInfoBar = FooterInfoBar(tinkerUIWindow=self.window, infoBar=self.infoBar, mainTextArea=self.textArea)
 
         self.ConfigureTags()

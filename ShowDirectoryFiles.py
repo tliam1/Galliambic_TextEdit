@@ -13,6 +13,7 @@ class ShowDirectoryFiles:
         self.directoryWindow.bind("<Button-1>", self.insertSelectedOption)
         self.fileSaver = fileSaver
         self.textHighlighter = textHighlighter
+        self.menuCreator = None
         # self.textCompleteWindow.bind("<Return>", self.insertSelectedOption)
         # self.textCompleteWindow.bind("<Shift-Tab>", self.UndoFocus())
 
@@ -48,4 +49,5 @@ class ShowDirectoryFiles:
         with open(fullPath, "r") as f:
             content = f.read()
             self.textArea.insert(1.0, content)
+        self.menuCreator.CreateMenus()
         self.textHighlighter.FullTextAutoColoring()

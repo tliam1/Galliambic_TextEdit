@@ -25,7 +25,7 @@ class MenuCreator:
         menu.add_cascade(label="File", menu=fileMenu)
         fileMenu.add_command(label="New", command=lambda: self.fileSaver.NewFile(MenuCreator=self), state=tk.NORMAL)
         fileMenu.add_command(label="Open", command=lambda: self.fileSaver.OpenFile(MenuCreator=self), state=tk.NORMAL)
-        fileMenu.add_command(label="OpenDirectory", command=lambda: self.GetFilesInDirectory(), state=tk.NORMAL)
+        fileMenu.add_command(label="Open Directory", command=lambda: self.GetFilesInDirectory(), state=tk.NORMAL)
         fileMenu.add_command(label="Save", command=self.fileSaver.SaveFile, state=tk.NORMAL if self.fileSaver.currentFile is not None else tk.DISABLED)
         fileMenu.add_command(label="Save As", command=lambda: self.fileSaver.SaveAsFile(MenuCreator=self), state=tk.NORMAL)
         fileMenu.add_separator()

@@ -78,8 +78,8 @@ class FileSaver:
     def SaveFile(self):
         if self.currentFile:
             with open(self.currentFile, 'w') as f:
-                content = self.textArea.dump(1.0, tk.END)
-                f.write(str(content))
+                content = f.read()
+                self.textArea.insert(1.0, content)
         pass
 
     def SetCurFile(self, filename):
