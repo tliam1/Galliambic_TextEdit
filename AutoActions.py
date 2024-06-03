@@ -7,7 +7,7 @@ class AutoActions:
         self.textArea = textArea
         self.window = tinkerUIWindow
         self.varNames = ["int", "float", "char", "uint", "uint32", "long", "int32", "string", "void",
-                         "bool", "unsigned", "short", "var", "let", "struct", "return"]
+                         "bool", "unsigned", "short", "var", "let", "struct", "return", "enum", "union"]
         self.blockCommentBeginLine = '1.0'
         # self.functionIdentifier = ["()"]
 
@@ -24,7 +24,7 @@ class AutoActions:
             start_of_previous_paragraph = f"1.0 + {last_newline_index + 1}c"
         # print(self.textArea.get(start_of_previous_paragraph, line))
         tabs = re.findall('\t', self.textArea.get(start_of_previous_paragraph, line))
-        print(len(tabs))
+        # print(len(tabs))
         # find the most recent paragraph prior to current position
         for tab in tabs:
             self.textArea.insert(tk.INSERT, "\t")

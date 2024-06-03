@@ -3,16 +3,18 @@ import tkinter.messagebox
 from tkinter import *
 from tkinter import filedialog
 import ast
+import os
 
 
 class MenuCreator:
-    def __init__(self, tinkerUIWindow, textArea, fileSaver, textAlign, fonts):
+    def __init__(self, tinkerUIWindow, textArea, fileSaver, textAlign, fonts, directoryWindow):
         self.window = tinkerUIWindow
         self.textArea = textArea
         self.popUpMenu = tk.Menu(self.window, tearoff=0)
         self.fileSaver = fileSaver
         self.textAlign = textAlign
         self.fontList = fonts
+        self.directory = directoryWindow
 
     def CreateMenus(self):
         menu = tk.Menu(self.window)
@@ -23,6 +25,7 @@ class MenuCreator:
         menu.add_cascade(label="File", menu=fileMenu)
         fileMenu.add_command(label="New", command=lambda: self.fileSaver.NewFile(MenuCreator=self), state=tk.NORMAL)
         fileMenu.add_command(label="Open", command=lambda: self.fileSaver.OpenFile(MenuCreator=self), state=tk.NORMAL)
+        fileMenu.add_command(label="OpenDirectory", command=lambda: self.GetFilesInDirectory(), state=tk.NORMAL)
         fileMenu.add_command(label="Save", command=self.fileSaver.SaveFile, state=tk.NORMAL if self.fileSaver.currentFile is not None else tk.DISABLED)
         fileMenu.add_command(label="Save As", command=lambda: self.fileSaver.SaveAsFile(MenuCreator=self), state=tk.NORMAL)
         fileMenu.add_separator()
@@ -54,4 +57,17 @@ class MenuCreator:
             self.popUpMenu.post(event.x_root, event.y_root)
         finally:
             self.popUpMenu.grab_release()
-        print("ATTEMPT POP UP")
+        # print("ATTEMPT POP UP")
+
+    def GetFilesInDirectory(self):
+        path = filedialog.askdirectory()
+        files = [fn for fn in os.listdir(path) if os.path.isfile(os.path.join(path, fn))]
+        # fullPath = []
+        # print(files)
+        # for filename in files:
+        #     fullPath.append(os.path.join(path, filename))
+
+        self.directory.showDirectoryOptions(files=files, path=path)
+        pass
+
+

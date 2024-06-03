@@ -7,7 +7,7 @@ from Fonts import TextFonts
 from FooterInfoBar import FooterInfoBar
 from AutoActions import AutoActions
 from TextComplete import TextComplete
-
+from ShowDirectoryFiles import ShowDirectoryFiles
 
 class TextEditor:
     def __init__(self):
@@ -18,6 +18,9 @@ class TextEditor:
 
         self.frame = tk.Frame(self.window)
         self.frame.grid(row=0, column=0, columnspan=3, sticky="nsew")
+
+        self.directoryFilesBox = tk.Listbox(self.frame, width=20)
+        self.directoryFilesBox.pack(side="left", fill="y")
 
         self.numberBar = tk.Text(self.frame, width=4, padx=5, pady=2, takefocus=0, border=0,
                                  background="lightgray", state="disabled", wrap="none", font=text_font)
@@ -31,6 +34,7 @@ class TextEditor:
 
         self.autoCompleteBox = tk.Listbox(self.window, bg="lightgray", fg="black", bd=0)
 
+
         self.infoBar = tk.Label(self.window, text="Info bar text", bg="lightgray", fg="black", anchor="w")
         self.infoBar.grid(row=2, column=0, columnspan=3, sticky="ew")
 
@@ -43,7 +47,10 @@ class TextEditor:
         self.textFonts.SetFont('Times New Roman')
         self.textAlign = TextAlignment(tinkerUIWindow=self.window, textArea=self.textArea)
         self.fileSaver = FileSaver(tinkerUIWindow=self.window, textArea=self.textArea, TextHighlighter=self.autoActions)
-        self.menuCreator = MenuCreator(tinkerUIWindow=self.window, textArea=self.textArea, fileSaver=self.fileSaver, textAlign=self.textAlign, fonts=self.textFonts)
+
+        self.showDirectory = ShowDirectoryFiles(tinkerUIWindow=self.window, textArea=self.textArea, showDirectoryWindow=self.directoryFilesBox, fileSaver=self.fileSaver, textHighlighter=self.autoActions)
+
+        self.menuCreator = MenuCreator(tinkerUIWindow=self.window, textArea=self.textArea, fileSaver=self.fileSaver, textAlign=self.textAlign, fonts=self.textFonts, directoryWindow=self.showDirectory)
         self.footerInfoBar = FooterInfoBar(tinkerUIWindow=self.window, infoBar=self.infoBar, mainTextArea=self.textArea)
 
         self.ConfigureTags()

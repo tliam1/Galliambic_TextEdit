@@ -31,6 +31,7 @@ class FileSaver:
         if file:
             self.window.title(f"Galliambic Editor: {file}")
             self.currentFile = file
+            print(self.currentFile)
             MenuCreator.CreateMenus()
             self.textArea.delete(1.0, tk.END)
             with open(file, "r") as f:
@@ -80,3 +81,6 @@ class FileSaver:
                 content = self.textArea.dump(1.0, tk.END)
                 f.write(str(content))
         pass
+
+    def SetCurFile(self, filename):
+        self.currentFile = filename
