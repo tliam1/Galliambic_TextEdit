@@ -69,17 +69,17 @@ class FileSaver:
         if file:
             self.currentFile = file
             MenuCreator.CreateMenus()
-            with open(file, "w") as f:
-                content = f.read()
-                self.textArea.insert(1.0, content)
+            with open(file, 'w') as file:
+                text_content = self.textArea.get("1.0", "end-1c")
+                file.write(text_content)
             self.window.title(f"Galliambic Editor: {file}")
         pass
 
     def SaveFile(self):
         if self.currentFile:
-            with open(self.currentFile, 'w') as f:
-                content = f.read()
-                self.textArea.insert(1.0, content)
+            with open(self.currentFile, 'w') as file:
+                text_content = self.textArea.get("1.0", "end-1c")
+                file.write(text_content)
         pass
 
     def SetCurFile(self, filename):
