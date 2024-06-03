@@ -7,7 +7,7 @@
 - Auto Indentation
 - Text fonts
 - Line Counter and Info Bar
- ![](https://github.com/tliam1/Galliambic_TextEdit/blob/main/ReadMeExtras/Color_Coding_and_Auto_Stuff.gif)
+ ![](https://github.com/tliam1/Galliambic_TextEdit/blob/main/ReadMeExtras/DirectoryOpenAndAutoComplete.gif)
 
 # Future Plans
 - Default File Setup
